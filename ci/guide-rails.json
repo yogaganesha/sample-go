@@ -1,0 +1,628 @@
+{
+	"metadata": {
+		"version": 2
+	},
+	"application": {
+		"name": "simple-go",
+		"language": "GOLANG",
+		"artifact_store": {
+			"type": "s3",
+			"repositories": [
+				{
+					"category": "rc-packaging",
+					"bucket": "guide-rails-calculi-rc"
+				},
+				{
+					"category": "final-packaging",
+					"bucket": "guide-rails-calculi-final"
+				},
+				{
+					"category": "logs",
+					"bucket": "guide-rails-calculi-logs"
+				}
+			]
+		}
+	},
+	"pipeline": {
+		"segments": [
+			{
+				"name": "Build",
+				"segment_type": "build",
+				"exit_actions": {
+					"default": {
+						"fetch_logs": true,
+						"code_analysis": null,
+						"delete_instances": true
+					},
+					"on_success": {
+						"code_analysis": null
+					},
+					"on_failure": {
+						"code_analysis": null
+					},
+					"on_abort": {
+						"code_analysis": null
+					}
+				},
+				"deployment_strategy": {
+					"canary_watch_time": "",
+					"update_watch_time": "",
+					"serial": false
+				},
+				"application_init": {},
+				"packages": [
+					{
+						"name": "((application.name))",
+						"downloads": [],
+						"files": [
+							"((application.name))*"
+						]
+					}
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))",
+						"when": "0001-01-01T00:00:00Z"
+					}
+				],
+				"post_deployment_actions": {
+					"loadbalancer": {}
+				},
+				"cache_info": {},
+				"tasks": [
+					{
+						"name": "simple-go",
+						"steps": [
+							{
+								"name": "Get Dependencies",
+								"definition": "Get Dependencies",
+								"command": "go get -t -d ./...",
+								"properties": []
+							},
+							{
+								"name": "Unit Tests and Coverage",
+								"definition": "Unit Tests and Coverage",
+								"command": "ginkgo -cover -r -v -skipPackage=pb,test -outputdir=./ | tee ginkgo.output\ncat ginkgo.output 2\u003e\u00261 | go-junit-report \u003e test.xml\ngocov convert *.coverprofile | gocov-xml \u003e coverage.xml",
+								"properties": []
+							},
+							{
+								"name": "Build",
+								"definition": "Build",
+								"command": "go build -o ((application.name))",
+								"properties": []
+							},
+							{
+								"name": "GetTools",
+								"definition": "GetTools",
+								"command": "go get github.com/axw/gocov/gocov\ngo get github.com/AlekSi/gocov-xml\ngo get -u github.com/jstemmer/go-junit-report\ncp ${GOPATH}/bin/gocov* ${GOPATH}/bin/go-junit-report .",
+								"properties": []
+							},
+							{
+								"name": "Build Instrumented",
+								"definition": "Build Instrumented",
+								"command": "go test -c -coverpkg=all -covermode=count -o ((application.name))-instrumented",
+								"properties": []
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Isolation",
+				"segment_type": "isolation",
+				"run_after": [
+					"Build"
+				],
+				"job_steps": [
+					{
+						"name": "print env",
+						"definition": "print env",
+						"command": "env | sort",
+						"properties": null
+					}
+				],
+				"exit_actions": {},
+				"deployment_strategy": {
+					"canaries": 1,
+					"max_in_flight": 1,
+					"canary_watch_time": "15000-30000",
+					"update_watch_time": "15000-30000",
+					"serial": false
+				},
+				"application_init": {},
+				"package_dependencies": [
+					"((application.name))"
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))",
+						"when": "0001-01-01T00:00:00Z"
+					}
+				],
+				"instance_groups": [
+					{
+						"name": "((application.name))",
+						"number_of_instances": 1,
+						"cloud_provider_type": "aws",
+						"cloud_provider_name": "guide-rails-aws-us-west-2",
+						"vm_type": "default",
+						"os_type": "default",
+						"networks": [
+							"isolation"
+						],
+						"availability_zones": [
+							"default"
+						],
+						"deployment_strategy": {
+							"canaries": 1,
+							"max_in_flight": 1,
+							"canary_watch_time": "5000-30000",
+							"update_watch_time": "5000-30000",
+							"serial": false
+						},
+						"dependencies": [
+							{
+								"name": "consul",
+								"release": "consul",
+								"provides": [
+									{
+										"name": "consul_servers.as",
+										"value": "consul_1"
+									}
+								],
+								"consumes": [
+									{
+										"name": "consul_servers.from",
+										"value": "consul_1"
+									}
+								],
+								"properties": [
+									{
+										"name": "consul.servicename",
+										"value": "((consul.servicename))-ISO-((application.shortsha))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.environment",
+										"value": "((consul.environment))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.datacenter",
+										"value": "((consul.datacenter))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.server",
+										"value": "false",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.joinservers",
+										"value": "((consul.joinservers))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.cert",
+										"value": "grsecret:tls.cert",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.key",
+										"value": "grsecret:tls.key",
+										"when": "0001-01-01T00:00:00Z"
+									}
+								]
+							}
+						]
+					}
+				],
+				"post_deployment_actions": {
+					"loadbalancer": {}
+				},
+				"releases": [
+					{
+						"name": "consul",
+						"version": "latest"
+					}
+				]
+			},
+			{
+				"name": "Integration",
+				"segment_type": "integration",
+				"run_after": [
+					"Build"
+				],
+				"exit_actions": {},
+				"deployment_strategy": {
+					"canaries": 1,
+					"max_in_flight": 1,
+					"canary_watch_time": "5000-30000",
+					"update_watch_time": "5000-30000",
+					"serial": false
+				},
+				"application_init": {},
+				"package_dependencies": [
+					"((application.name))"
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))",
+						"when": "0001-01-01T00:00:00Z"
+					}
+				],
+				"instance_groups": [
+					{
+						"name": "((application.name))",
+						"number_of_instances": 1,
+						"cloud_provider_type": "aws",
+						"cloud_provider_name": "guide-rails-aws-us-west-2",
+						"vm_type": "default",
+						"os_type": "default",
+						"networks": [
+							"integration"
+						],
+						"availability_zones": [
+							"default"
+						],
+						"deployment_strategy": {
+							"canaries": 1,
+							"max_in_flight": 1,
+							"canary_watch_time": "5000-30000",
+							"update_watch_time": "5000-30000",
+							"serial": false
+						},
+						"dependencies": [
+							{
+								"name": "consul",
+								"release": "consul",
+								"provides": [
+									{
+										"name": "consul_servers.as",
+										"value": "consul_1"
+									}
+								],
+								"consumes": [
+									{
+										"name": "consul_servers.from",
+										"value": "consul_1"
+									}
+								],
+								"properties": [
+									{
+										"name": "consul.servicename",
+										"value": "((consul.servicename))-int-((application.shortsha))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.environment",
+										"value": "((consul.environment))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.datacenter",
+										"value": "((consul.datacenter))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.server",
+										"value": "false",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.joinservers",
+										"value": "((consul.joinservers))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.cert",
+										"value": "grsecret:tls.cert",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.key",
+										"value": "grsecret:tls.key",
+										"when": "0001-01-01T00:00:00Z"
+									}
+								]
+							}
+						]
+					}
+				],
+				"gated": true,
+				"post_deployment_actions": {
+					"loadbalancer": {}
+				},
+				"releases": [
+					{
+						"name": "consul",
+						"version": "latest"
+					}
+				]
+			},
+			{
+				"name": "Release",
+				"segment_type": "release",
+				"run_after": [
+					"Isolation",
+					"Integration"
+				],
+				"job_steps": [
+					{
+						"name": "print env",
+						"definition": "print env",
+						"command": "env | sort",
+						"properties": null
+					}
+				],
+				"exit_actions": {},
+				"deployment_strategy": {
+					"canaries": 1,
+					"max_in_flight": 1,
+					"canary_watch_time": "5000-30000",
+					"update_watch_time": "5000-30000",
+					"serial": false
+				},
+				"application_init": {},
+				"package_dependencies": [
+					"((application.name))"
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))",
+						"when": "0001-01-01T00:00:00Z"
+					}
+				],
+				"instance_groups": [
+					{
+						"name": "((application.name))",
+						"number_of_instances": 1,
+						"cloud_provider_type": "aws",
+						"cloud_provider_name": "guide-rails-aws-us-west-2",
+						"vm_type": "default",
+						"os_type": "default",
+						"networks": [
+							"release"
+						],
+						"availability_zones": [
+							"default"
+						],
+						"deployment_strategy": {
+							"canaries": 1,
+							"max_in_flight": 1,
+							"canary_watch_time": "5000-30000",
+							"update_watch_time": "5000-30000",
+							"serial": false
+						},
+						"dependencies": [
+							{
+								"name": "consul",
+								"release": "consul",
+								"provides": [
+									{
+										"name": "consul_servers.as",
+										"value": "consul_1"
+									}
+								],
+								"consumes": [
+									{
+										"name": "consul_servers.from",
+										"value": "consul_1"
+									}
+								],
+								"properties": [
+									{
+										"name": "consul.servicename",
+										"value": "((consul.servicename))-rel-((application.shortsha))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.environment",
+										"value": "((consul.environment))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.datacenter",
+										"value": "((consul.datacenter))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.server",
+										"value": "false",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.joinservers",
+										"value": "((consul.joinservers))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.cert",
+										"value": "grsecret:tls.cert",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.key",
+										"value": "grsecret:tls.key",
+										"when": "0001-01-01T00:00:00Z"
+									}
+								]
+							}
+						]
+					}
+				],
+				"gated": true,
+				"post_deployment_actions": {
+					"loadbalancer": {}
+				},
+				"releases": [
+					{
+						"name": "consul",
+						"version": "latest"
+					}
+				]
+			},
+			{
+				"name": "Production",
+				"segment_type": "production",
+				"persistent": true,
+				"run_after": [
+					"Release"
+				],
+				"job_steps": [
+					{
+						"name": "print env",
+						"definition": "print env",
+						"command": "env | sort",
+						"properties": null
+					}
+				],
+				"exit_actions": {},
+				"deployment_strategy": {
+					"canaries": 1,
+					"max_in_flight": 1,
+					"canary_watch_time": "5000-30000",
+					"update_watch_time": "5000-30000",
+					"serial": false
+				},
+				"application_init": {},
+				"package_dependencies": [
+					"((application.name))"
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))",
+						"when": "0001-01-01T00:00:00Z"
+					}
+				],
+				"instance_groups": [
+					{
+						"name": "((application.name))",
+						"number_of_instances": 1,
+						"cloud_provider_type": "aws",
+						"cloud_provider_name": "guide-rails-aws-us-west-2",
+						"vm_type": "default",
+						"os_type": "default",
+						"networks": [
+							"production"
+						],
+						"availability_zones": [
+							"default"
+						],
+						"deployment_strategy": {
+							"canaries": 1,
+							"max_in_flight": 1,
+							"canary_watch_time": "5000-30000",
+							"update_watch_time": "5000-30000",
+							"serial": false
+						},
+						"dependencies": [
+							{
+								"name": "consul",
+								"release": "consul",
+								"provides": [
+									{
+										"name": "consul_servers.as",
+										"value": "consul_1"
+									}
+								],
+								"consumes": [
+									{
+										"name": "consul_servers.from",
+										"value": "consul_1"
+									}
+								],
+								"properties": [
+									{
+										"name": "consul.servicename",
+										"value": "((consul.servicename))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.environment",
+										"value": "((consul.environment))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.datacenter",
+										"value": "((consul.datacenter))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.server",
+										"value": "false",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.joinservers",
+										"value": "((consul.joinservers))",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.cert",
+										"value": "grsecret:tls.cert",
+										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "calculi.intermediate.key",
+										"value": "grsecret:tls.key",
+										"when": "0001-01-01T00:00:00Z"
+									}
+								]
+							}
+						]
+					}
+				],
+				"gated": true,
+				"post_deployment_actions": {
+					"loadbalancer": {}
+				},
+				"releases": [
+					{
+						"name": "consul",
+						"version": "latest"
+					}
+				]
+			}
+		],
+		"exit_actions": {
+			"default": {
+				"fetch_logs": true,
+				"code_analysis": {
+					"publish": true,
+					"properties": null
+				},
+				"delete_instances": true
+			}
+		},
+		"default_properties": [
+			{
+				"name": "GO111MODULE",
+				"value": "auto",
+				"description": "set go module to auto",
+				"when": "0001-01-01T00:00:00Z",
+				"type": "string"
+			}
+		],
+		"deployment_files": [
+			{
+				"source_path": "ci/bin/start_service.sh",
+				"target_path": "bin/start_service.sh"
+			}
+		],
+		"application_init": {},
+		"process": {
+			"init": {
+				"command": "bin/start_service.sh"
+			}
+		}
+	},
+	"organization": {
+		"orgname": "GR-Product"
+	}
+}
