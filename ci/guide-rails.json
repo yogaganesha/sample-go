@@ -114,14 +114,6 @@
 				"run_after": [
 					"Build"
 				],
-				"job_steps": [
-					{
-						"name": "print env",
-						"definition": "print env",
-						"command": "env | sort",
-						"properties": null
-					}
-				],
 				"exit_actions": {},
 				"deployment_strategy": {
 					"canaries": 1,
@@ -222,6 +214,19 @@
 				"post_deployment_actions": {
 					"loadbalancer": {}
 				},
+				"tasks": [
+					{
+						"name": "simple-go",
+						"steps": [
+							{
+								"name": "print env",
+								"definition": "print env",
+								"command": "env | sort",
+								"properties": null
+							}
+						]
+					}
+				],
 				"releases": [
 					{
 						"name": "consul",
@@ -350,14 +355,6 @@
 					"Isolation",
 					"Integration"
 				],
-				"job_steps": [
-					{
-						"name": "print env",
-						"definition": "print env",
-						"command": "env | sort",
-						"properties": null
-					}
-				],
 				"exit_actions": {},
 				"deployment_strategy": {
 					"canaries": 1,
@@ -459,6 +456,19 @@
 				"post_deployment_actions": {
 					"loadbalancer": {}
 				},
+				"tasks": [
+					{
+						"name": "simple-go",
+						"steps": [
+							{
+								"name": "print env",
+								"definition": "print env",
+								"command": "env | sort",
+								"properties": null
+							}
+						]
+					}
+				],
 				"releases": [
 					{
 						"name": "consul",
@@ -472,14 +482,6 @@
 				"persistent": true,
 				"run_after": [
 					"Release"
-				],
-				"job_steps": [
-					{
-						"name": "print env",
-						"definition": "print env",
-						"command": "env | sort",
-						"properties": null
-					}
 				],
 				"exit_actions": {},
 				"deployment_strategy": {
@@ -582,6 +584,19 @@
 				"post_deployment_actions": {
 					"loadbalancer": {}
 				},
+				"tasks": [
+					{
+						"name": "simple-go",
+						"steps": [
+							{
+								"name": "print env",
+								"definition": "print env",
+								"command": "env | sort",
+								"properties": null
+							}
+						]
+					}
+				],
 				"releases": [
 					{
 						"name": "consul",
