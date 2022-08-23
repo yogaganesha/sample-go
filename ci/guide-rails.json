@@ -482,6 +482,41 @@
 					"Release"
 				],
 				"exit_actions": {},
+				"notification_configurations": [
+					{
+						"notification_type": "slack",
+						"tool_alias": "test-im",
+						"properties": [],
+						"notification_actions": {
+							"default": {
+								"to": [
+									""
+								]
+							},
+							"on_success": {
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "Prod upgraded"
+							},
+							"on_failure": {
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "Ouch! Prod deployed failed"
+							},
+							"on_abort": {
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "What? Someone aborted Prod deploy"
+							}
+						}
+					}
+				],
 				"deployment_strategy": {
 					"canaries": 1,
 					"max_in_flight": 1,
