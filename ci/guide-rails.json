@@ -494,6 +494,7 @@
 								]
 							},
 							"on_success": {
+								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -501,6 +502,7 @@
 								"message": "Prod upgraded"
 							},
 							"on_failure": {
+								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -508,6 +510,7 @@
 								"message": "Ouch! Prod deployed failed"
 							},
 							"on_abort": {
+								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
