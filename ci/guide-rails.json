@@ -44,6 +44,37 @@
 						"code_analysis": null
 					}
 				},
+				"notification_configurations": [
+					{
+						"notification_type": "slack",
+						"tool_alias": "yg-gr-test",
+						"properties": [],
+						"notification_actions": {
+							"default": {
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "Passed"
+							},
+							"on_success": {
+								"to": [
+									""
+								]
+							},
+							"on_failure": {
+								"to": [
+									""
+								]
+							},
+							"on_abort": {
+								"to": [
+									""
+								]
+							}
+						}
+					}
+				],
 				"deployment_strategy": {
 					"canary_watch_time": "",
 					"update_watch_time": "",
@@ -485,7 +516,7 @@
 				"notification_configurations": [
 					{
 						"notification_type": "slack",
-						"tool_alias": "test-im",
+						"tool_alias": "yg-gr-test",
 						"properties": [],
 						"notification_actions": {
 							"default": {
@@ -494,7 +525,6 @@
 								]
 							},
 							"on_success": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -502,7 +532,6 @@
 								"message": "Prod upgraded"
 							},
 							"on_failure": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -510,7 +539,6 @@
 								"message": "Ouch! Prod deployed failed"
 							},
 							"on_abort": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
