@@ -35,7 +35,18 @@
 						"delete_instances": true
 					},
 					"on_success": {
-						"code_analysis": null
+						"notifications": [
+							{
+								"type": "slack",
+								"send_notification": true,
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "Build Success"
+							}
+						],
+						"fetch_logs": true,
+						"delete_instances": true
 					},
 					"on_failure": {
 						"code_analysis": null
