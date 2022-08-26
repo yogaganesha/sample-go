@@ -35,6 +35,7 @@
 						"delete_instances": true
 					},
 					"on_success": {
+						"fetch_logs": true,
 						"notifications": [
 							{
 								"type": "slack",
@@ -45,7 +46,7 @@
 								"message": "Build Success"
 							}
 						],
-						"fetch_logs": true,
+						"code_analysis": null,
 						"delete_instances": true
 					},
 					"on_failure": {
@@ -62,17 +63,17 @@
 						"properties": [],
 						"notification_actions": {
 							"default": {
-								"type": "slack",
+								"to": [
+									"#gr-pipeline-notification"
+								],
+								"message": "Build Passed"
+							},
+							"on_success": {
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
 								],
-								"message": "Passed"
-							},
-							"on_success": {
-								"to": [
-									""
-								]
+								"message": "Build Passed"
 							},
 							"on_failure": {
 								"to": [
@@ -537,7 +538,6 @@
 								]
 							},
 							"on_success": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -545,7 +545,6 @@
 								"message": "Prod upgraded"
 							},
 							"on_failure": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
@@ -553,7 +552,6 @@
 								"message": "Ouch! Prod deployed failed"
 							},
 							"on_abort": {
-								"type": "slack",
 								"send_notification": true,
 								"to": [
 									"#gr-pipeline-notification"
