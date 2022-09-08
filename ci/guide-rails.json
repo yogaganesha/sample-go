@@ -149,6 +149,30 @@
 								"properties": []
 							}
 						]
+					},
+					{
+						"name": "parallel-2",
+						"steps": [
+							{
+								"name": "print env",
+								"definition": "print env",
+								"command": "env | sort",
+								"properties": null
+							}
+						],
+						"docker_options": {}
+					},
+					{
+						"name": "parallel-3",
+						"steps": [
+							{
+								"name": "print env",
+								"definition": "print env",
+								"command": "env",
+								"properties": null
+							}
+						],
+						"docker_options": {}
 					}
 				]
 			},
