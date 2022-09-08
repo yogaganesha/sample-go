@@ -156,7 +156,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "env | sort",
+								"command": "export MY_TEST=((test.foo))\nexport MY_P1=((application.name))\n\nenv | sort",
 								"properties": null
 							}
 						],
@@ -168,7 +168,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "env",
+								"command": "export MY_TEST=((test.foo))-1\nexport MY_P1=((application.name))-2\n\nenv | sort",
 								"properties": null
 							}
 						],
