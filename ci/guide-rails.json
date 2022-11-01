@@ -216,14 +216,12 @@
 							"default"
 						],
 						"deployment_strategy": {
-							"canaries": 1,
-							"max_in_flight": 1,
 							"canary_watch_time": "5000-30000",
-							"update_watch_time": "5000-30000",
-							"serial": false
+							"update_watch_time": "5000-30000"
 						},
 						"dependencies": [
 							{
+								"id": "dccb10e9-9b24-4519-4394-7e5603a5cc9c",
 								"name": "consul",
 								"release": "consul",
 								"provides": [
@@ -273,6 +271,10 @@
 										"name": "calculi.intermediate.key",
 										"value": "grsecret:tls.key",
 										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.cert.domain",
+										"value": "[((consul.servicename))-ISO-((application.shortsha))]"
 									}
 								]
 							}
@@ -295,8 +297,10 @@
 						]
 					}
 				],
+				"deployment_target": 1,
 				"releases": [
 					{
+						"id": "dccb10e9-9b24-4519-4394-7e5603a5cc9c",
 						"name": "consul",
 						"version": "latest"
 					}
@@ -341,15 +345,10 @@
 						"availability_zones": [
 							"default"
 						],
-						"deployment_strategy": {
-							"canaries": 1,
-							"max_in_flight": 1,
-							"canary_watch_time": "5000-30000",
-							"update_watch_time": "5000-30000",
-							"serial": false
-						},
+						"deployment_strategy": {},
 						"dependencies": [
 							{
+								"id": "dccb10e9-9b24-4519-4394-7e5603a5cc9c",
 								"name": "consul",
 								"release": "consul",
 								"provides": [
@@ -399,6 +398,10 @@
 										"name": "calculi.intermediate.key",
 										"value": "grsecret:tls.key",
 										"when": "0001-01-01T00:00:00Z"
+									},
+									{
+										"name": "consul.cert.domain",
+										"value": "[((consul.servicename))-ISO-((application.shortsha))]"
 									}
 								]
 							}
@@ -408,8 +411,10 @@
 				"post_deployment_actions": {
 					"loadbalancer": {}
 				},
+				"deployment_target": 1,
 				"releases": [
 					{
+						"id": "dccb10e9-9b24-4519-4394-7e5603a5cc9c",
 						"name": "consul",
 						"version": "latest"
 					}
