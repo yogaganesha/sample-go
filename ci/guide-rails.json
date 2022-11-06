@@ -168,7 +168,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "export MY_TEST=((test.foo))-1\nexport MY_P1=((application.name))-2\n\nenv | sort",
+								"command": "curl https://defectdojo.cloudbees.com/\nnslookup https://defectdojo.cloudbees.com/",
 								"properties": null
 							}
 						],
