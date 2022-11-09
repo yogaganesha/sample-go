@@ -168,7 +168,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "curl https://defectdojo.cloudbees.com/\nnslookup https://defectdojo.cloudbees.com/\n",
+								"command": "env | sort",
 								"properties": null
 							}
 						],
