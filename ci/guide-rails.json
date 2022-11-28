@@ -264,12 +264,12 @@
 									},
 									{
 										"name": "calculi.intermediate.cert",
-										"value": "grsecret:tls.cert",
+										"value": "((tls.cert))",
 										"when": "0001-01-01T00:00:00Z"
 									},
 									{
 										"name": "calculi.intermediate.key",
-										"value": "grsecret:tls.key",
+										"value": "((tls.key))",
 										"when": "0001-01-01T00:00:00Z"
 									},
 									{
@@ -391,12 +391,12 @@
 									},
 									{
 										"name": "calculi.intermediate.cert",
-										"value": "grsecret:tls.cert",
+										"value": "((tls.cert))",
 										"when": "0001-01-01T00:00:00Z"
 									},
 									{
 										"name": "calculi.intermediate.key",
-										"value": "grsecret:tls.key",
+										"value": "((tls.key))",
 										"when": "0001-01-01T00:00:00Z"
 									},
 									{
