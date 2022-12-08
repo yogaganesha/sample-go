@@ -181,7 +181,6 @@
 			"default": {
 				"fetch_logs": true,
 				"code_analysis": {
-					"publish": true,
 					"properties": null
 				},
 				"delete_instances": true
