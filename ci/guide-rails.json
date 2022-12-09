@@ -21,8 +21,7 @@
 					"bucket": "guide-rails-calculi-logs"
 				}
 			]
-		},
-		"sonar_url": "na"
+		}
 	},
 	"pipeline": {
 		"segments": [
