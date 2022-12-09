@@ -5,6 +5,7 @@
 	"application": {
 		"name": "simple-go",
 		"language": "GOLANG",
+		"sonar_url":"na",
 		"artifact_store": {
 			"type": "s3",
 			"repositories": [
