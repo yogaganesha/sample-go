@@ -121,7 +121,7 @@
 							{
 								"name": "Get Dependencies",
 								"definition": "Get Dependencies",
-								"command": "go get -t -d ./...",
+								"command": "go get -t -d ./...\n",
 								"properties": []
 							},
 							{
