@@ -1,0 +1,124 @@
+{
+	"metadata": {
+		"version": 2
+	},
+	"application": {
+		"name": "yoga-exp",
+		"language": "GOLANG",
+		"artifact_store": {
+			"type": "s3",
+			"repositories": [
+				{
+					"category": "rc-packaging",
+					"bucket": "guide-rails-calculi-rc"
+				},
+				{
+					"category": "final-packaging",
+					"bucket": "guide-rails-calculi-final"
+				},
+				{
+					"category": "logs",
+					"bucket": "guide-rails-calculi-logs"
+				}
+			]
+		}
+	},
+	"pipeline": {
+		"segments": [
+			{
+				"name": "Build",
+				"segment_type": "build",
+				"exit_actions": {},
+				"deployment_strategy": {},
+				"application_init": {},
+				"packages": [
+					{
+						"name": "((application.name))",
+						"downloads": [],
+						"files": [
+							"((application.name))*"
+						]
+					}
+				],
+				"instance_tags": [
+					{
+						"name": "application.name",
+						"value": "((application.name))"
+					}
+				],
+				"tasks": [
+					{
+						"name": "yoga-exp",
+						"steps": [
+							{
+								"name": "Get Dependencies",
+								"definition": "Get Dependencies",
+								"command": "go get -t -d ./...",
+								"properties": null
+							},
+							{
+								"name": "Unit Tests",
+								"definition": "Unit Tests",
+								"command": "set -o pipefail\nginkgo -cover -r -v -skip-package=pb,test,mock,proto -output-dir=./ | tee ginkgo.output",
+								"properties": null
+							},
+							{
+								"name": "Convert coverage",
+								"definition": "Convert coverage",
+								"command": "cat ginkgo.output 2\u003e\u00261 | go-junit-report \u003e test.xml\ngocov convert *.coverprofile | gocov-xml \u003e coverage.xml",
+								"properties": null
+							},
+							{
+								"name": "Build",
+								"definition": "Build",
+								"command": "go build -o ((application.name))",
+								"properties": null
+							},
+							{
+								"name": "Build Instrumented",
+								"definition": "Build Instrumented",
+								"command": "go test -c -coverpkg=all -covermode=count -o ((application.name))-instrumented",
+								"properties": null
+							}
+						],
+						"docker_options": {}
+					}
+				]
+			}
+		],
+		"exit_actions": {
+			"default": {
+				"fetch_logs": true,
+				"code_analysis": {
+					"publish": true,
+					"properties": null
+				},
+				"delete_instances": true
+			}
+		},
+		"default_properties": [
+			{
+				"name": "GO111MODULE",
+				"value": "auto",
+				"description": "set go module to auto",
+				"when": "0001-01-01T00:00:00Z",
+				"type": "string"
+			}
+		],
+		"deployment_files": [
+			{
+				"source_path": "ci/bin/start_service.sh",
+				"target_path": "bin/start_service.sh"
+			}
+		],
+		"application_init": {},
+		"process": {
+			"init": {
+				"command": "bin/start_service.sh"
+			}
+		}
+	},
+	"organization": {
+		"orgname": "Playground"
+	}
+}
