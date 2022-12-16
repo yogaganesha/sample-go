@@ -65,7 +65,7 @@
 							{
 								"name": "Convert coverage",
 								"definition": "Convert coverage",
-								"command": "cat ginkgo.output 2\u003e\u00261 | go-junit-report \u003e test.xml\ngocov convert *.coverprofile | gocov-xml \u003e coverage.xml",
+								"command": "[ -f ginkgo.output ] \u0026\u0026 cat ginkgo.output 2\u003e\u00261 | go-junit-report \u003e test.xml\n[ -f coverprofile.out ] \u0026\u0026 gocov convert coverprofile.out | gocov-xml \u003e coverage.xml",
 								"properties": null
 							},
 							{
