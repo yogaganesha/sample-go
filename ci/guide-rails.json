@@ -168,7 +168,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "env | sort",
+								"command": "env | sort\n",
 								"properties": null
 							}
 						],
