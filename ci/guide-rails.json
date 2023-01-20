@@ -172,6 +172,9 @@
 								"properties": null
 							}
 						],
+						"run_after": [
+							"parallel-2"
+						],
 						"docker_options": {}
 					}
 				]
