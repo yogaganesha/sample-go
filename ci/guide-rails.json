@@ -156,7 +156,7 @@
 							{
 								"name": "print env",
 								"definition": "print env",
-								"command": "export MY_TEST=((test.foo))\nexport MY_P1=((application.name))\n\nopenssl version\n\nenv | sort",
+								"command": "export MY_TEST=((test.foo))\nexport MY_P1=((application.name))\n\nopenssl version\n\nenv | sort\n",
 								"properties": null
 							}
 						],
