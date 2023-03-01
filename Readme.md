@@ -1,6 +1,6 @@
 Simple hello world GO app
 
-test notifiaction - run 8
+test notifiaction - run 9
 
 
 
